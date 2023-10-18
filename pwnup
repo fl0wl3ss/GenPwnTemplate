@@ -44,12 +44,14 @@ def exploit(io, libc=null):
         #raw_input("Fire GDB!")
         if len(sys.argv) > 1 and sys.argv[1] == "d":
             choosen_gdb = [
-                "source /home/mydata/tools/gdb/gdb-pwndbg/gdbinit.py",     # 0 - pwndbg
-                "source /home/mydata/tools/gdb/gdb-peda/peda.py",          # 1 - peda
-                #"source /home/mydata/tools/gdb/gdb-gef/.gdbinit-gef.py",    # 2 - gef
-                "source /home/fl0wl3ss/Github/gef/gef.py"    # 2 - gef
+                "",     # 0 - vanilla 
+                "source /home/mydata/tools/gdb/gdb-pwndbg/gdbinit.py",     # 1 - pwndbg
+                "source /home/mydata/tools/gdb/gdb-peda/peda.py",          # 2 - peda
+                "source /home/fl0wl3ss/Github/gef/gef.py"    # 3 - gef
                 ][{{debugger}}]
             cmd = choosen_gdb + """
+            break main
+            # break main
 
             """
             gdb.attach(io, gdbscript=cmd)
@@ -90,12 +92,14 @@ def generate_exploit(executable, target, port, debugger, remote, libc, locallib)
 
     template = jinja2.Template(template_string)
     # debugger
-    if debugger == "pwndbg":
+    if debugger == "vanilla":
         debugger = 0
-    elif debugger == "peda":
+    elif debugger == "pwndbg":
         debugger = 1
-    elif debugger == "gef": 
+    elif debugger == "peda": 
         debugger = 2
+    elif debugger == "gef": 
+        debugger = 3
     else :
         debugger = 0
 
