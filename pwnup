@@ -51,7 +51,6 @@ def exploit(io, libc=null):
                 ][{{debugger}}]
             cmd = choosen_gdb + """
             break main
-            # break main
 
             """
             gdb.attach(io, gdbscript=cmd)
@@ -123,8 +122,6 @@ def get_library_paths(executable_path):
                     library_paths.append(library_path)
 
     return library_paths
-
-
 
 def save_exploit_to_file(exploit_text, output):
     with open(output, "w") as exploit_file:
