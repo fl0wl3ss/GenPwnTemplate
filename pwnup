@@ -43,20 +43,15 @@ def exploit(io, libc=null):
     if LOCAL==True:
         #raw_input("Fire GDB!")
         if len(sys.argv) > 1 and sys.argv[1] == "d":
-            choosen_gdb = [
-                "",     # 0 - vanilla 
-                "source /home/mydata/tools/gdb/gdb-pwndbg/gdbinit.py",     # 1 - pwndbg
-                "source /home/mydata/tools/gdb/gdb-peda/peda.py",          # 2 - peda
-                "source /home/fl0wl3ss/Github/gef/gef.py"    # 3 - gef
-                ][{{debugger}}]
-            cmd = choosen_gdb + """
-            break main
+            cmd = \""" 
+            #break main
 
-            """
+            \"""
             gdb.attach(io, gdbscript=cmd)
-#--------------------------------------------
-#------------------EXPLOIT-------------------
-#--------------------------------------------
+
+#---------------------------------------------
+#------------------ Exploit ------------------
+#---------------------------------------------
 
     payload = b""
     io.sendline(payload)
@@ -84,25 +79,14 @@ if __name__ == "__main__":
 """
 )
 
-def generate_exploit(executable, target, port, debugger, remote, libc, locallib):
+def generate_exploit(executable, target, port, remote, libc, locallib):
     script_dir = os.path.dirname(os.path.abspath(__file__))
 
     template_path = os.path.join(script_dir, "tmp.py")
 
     template = jinja2.Template(template_string)
-    # debugger
-    if debugger == "vanilla":
-        debugger = 0
-    elif debugger == "pwndbg":
-        debugger = 1
-    elif debugger == "peda": 
-        debugger = 2
-    elif debugger == "gef": 
-        debugger = 3
-    else :
-        debugger = 0
 
-    exploit_text = template.render(executable=executable , target=target, port=port, remote=remote, debugger=debugger, libc=libc, locallib=locallib)
+    exploit_text = template.render(executable=executable , target=target, port=port, remote=remote, libc=libc, locallib=locallib)
 
     return exploit_text
 
@@ -131,8 +115,6 @@ def main():
     parser = argparse.ArgumentParser(description="Exploit Template Generator")
     parser.add_argument("-t", "--target", default="127.0.0.1", help="Target IP address")
     parser.add_argument("-p", "--port", default=4444, type=int, help="Target port")
-    parser.add_argument("-d", "--debugger", default="gef", help="Select debugger (vanilla,peda,gef)")
-    #parser.add_argument("-b", "--bin",dest="executable", required=True, help="Executable to Exploit")
     parser.add_argument("executable", help="Executable to Exploit")
     parser.add_argument("-r", "--remote", action="store_true", help="Set remote mode (True/False)")
     parser.add_argument("-l", "--libc", default="", help="Linked libc" )
@@ -147,7 +129,7 @@ def main():
         for path in library_paths:
             locallib=path
 
-    exploit_text = generate_exploit(args.executable, args.target, args.port, args.debugger, args.remote, args.libc,locallib)
+    exploit_text = generate_exploit(args.executable, args.target, args.port, args.remote, args.libc,locallib)
 
     #print(exploit_text)
     save_exploit_to_file(exploit_text, args.output)
