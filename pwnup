@@ -105,7 +105,13 @@ def get_library_paths(executable_path):
                 if library_path.startswith("/"):
                     library_paths.append(library_path)
 
-    return library_paths
+    
+    locallib = "___"
+    if library_paths:
+        for path in library_paths:
+            locallib=path
+
+    return locallib
 
 def save_exploit_to_file(exploit_text, output):
     with open(output, "w") as exploit_file:
@@ -123,11 +129,7 @@ def main():
     args = parser.parse_args()
 
     executable_path = "args.executable"
-    library_paths = get_library_paths(args.executable)
-    locallib = "___"
-    if library_paths:
-        for path in library_paths:
-            locallib=path
+    locallib = get_library_paths(args.executable)
 
     exploit_text = generate_exploit(args.executable, args.target, args.port, args.remote, args.libc,locallib)
 
